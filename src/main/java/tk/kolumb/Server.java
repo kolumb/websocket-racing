@@ -2,22 +2,45 @@ package tk.kolumb;
 
 import com.corundumstudio.socketio.listener.*;
 import com.corundumstudio.socketio.*;
+import java.util.HashMap;
 
 public class Server {
     public static void main(String[] args) throws InterruptedException {
 
+//        HashMap<>
+
         Configuration config = new Configuration();
         config.setHostname("localhost");
-        config.setPort(9092);
+        config.setPort(9091);
 
         final SocketIOServer server = new SocketIOServer(config);
+        BroadcastOperations myBroadcastOperations = server.getBroadcastOperations();
+        server.addConnectListener(new ConnectListener() {
+            @Override
+            public void onConnect(SocketIOClient client) {
+//                System.out.println(client.getHandshakeData());
+//                System.out.println(client.getTransport());
+                System.out.println(client.getRemoteAddress());
+            }
+        });
         server.addEventListener("chatevent", ChatObject.class, new DataListener<ChatObject>() {
             @Override
             public void onData(SocketIOClient client, ChatObject data, AckRequest ackRequest) {
-                // broadcast messages to all clients
                 System.out.println(data);
-                //server.getBroadcastOperations().sendEvent("chatevent", data);
             }
+        });
+        server.addEventListener("hello", ChatObject.class, (client, data, ackRequest) -> {
+            System.out.println(data.getUserName() + " hello");
+            client.sendEvent("everybody", data);
+            client.getSessionId();
+        });
+        server.addEventListener("down", ChatObject.class, (client, data, ackRequest) -> {
+            System.out.println(data.getUserName() + " moving down");
+            myBroadcastOperations.sendEvent("down", data);
+        });
+        server.addEventListener("up", ChatObject.class, (client, data, ackRequest) -> {
+            System.out.println(data.getUserName() + " moving up");
+            myBroadcastOperations.sendEvent("up", data);
         });
 
         server.start();

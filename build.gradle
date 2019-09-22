@@ -2,6 +2,33 @@ plugins {
     id 'java'
 }
 
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'tk.kolumb.Server',
+                "Implementation-Title": "Gradle",
+                "Implementation-Version": 1.0
+        )
+    }
+}
+//create a single Jar with all dependencies
+task uberJar(type: Jar) {
+    archiveClassifier = 'uber'
+
+    from sourceSets.main.output
+
+    dependsOn configurations.runtimeClasspath
+    from {
+        configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) }
+    }
+    manifest {
+        attributes(
+                'Main-Class': 'tk.kolumb.Server'
+        )
+    }
+}
+
+
 group 'tk.kolumb'
 version '1.0-SNAPSHOT'
 
@@ -19,4 +46,5 @@ dependencies {
 
     }
     testCompile group: 'junit', name: 'junit', version: '4.12'
+    implementation 'commons-io:commons-io:2.6'
 }

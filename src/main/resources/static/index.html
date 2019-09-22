@@ -7,10 +7,29 @@
     <title>Demo Chat</title>
     <script src="https://cdn.jsdelivr.net/npm/socket.io-client@2/dist/socket.io.js"></script>
     <script>
-		var socket =  io.connect('http://localhost:9092');
+		var socket =  io.connect('http://localhost:9091');
+		let userName = 'user' + Math.floor(Math.random()*1000)
 		socket.on('connect', function() {
 			console.log('connected!')
+			socket.emit('hello',{userName:userName})
 		});
+		socket.on('down', function(data) {
+			console.log(data.userName + ': down!')
+		});
+		socket.on('up', function(data) {
+			console.log(data.userName + ': up!')
+		});
+		addEventListener('keydown', e => {
+		    switch (e.code) {
+		    case 'ArrowDown':
+		    case 'KeyS':
+		        socket.emit('down', {userName:userName})
+		        break
+		    case 'ArrowUp':
+		    case 'KeyW':
+		        socket.emit('up',{userName:userName})
+		    }
+		})
     </script>
 </head>
 <body>
