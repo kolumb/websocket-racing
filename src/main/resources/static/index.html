@@ -1,66 +1,65 @@
 <!DOCTYPE html>
 <html>
 <head>
-
     <meta charset="utf-8" />
-
     <title>Demo Chat</title>
-    <script src="https://cdn.jsdelivr.net/npm/socket.io-client@2/dist/socket.io.js"></script>
-    <script>
-		var socket =  io.connect('http://localhost:9091');
-		let userName// = 'user' + Math.floor(Math.random()*1000)
-		console.log('my name is ' + userName)
-		let users = {}
-		let myId
-		socket.on('connect', () => {
-			console.log('connected!')
-			socket.emit('hello',{/*userName:userName*/})
-		});
-		socket.on('you', data => {
-		    console.log('you', data)
-		    myId = data
-		    if(users[myId]) {
-		        userName = users[myId]
-			    console.log('Now my name is ' + userName)
-		    }
-		});
-		socket.on('everybody', data => {
-		    users = data
-			console.log('everybody', data)
-			if(myId) {
-			    userName = users[myId]
-                console.log('At least my name is ' + userName)
-			}
-		});
-		socket.on('new user', data => {
-			console.log('new user: ' + data)
-		    users[data[0]] = data[1]
-		});
-		socket.on('down', data => {
-			console.log(data.userName + ': down!')
-		});
-		socket.on('up', data => {
-			console.log(data.userName + ': up!')
-		});
-		socket.on('disconnected', data => {
-		    console.log('disconnected: ' + data)
-		})
-		addEventListener('keydown', e => {
-		    switch (e.code) {
-		    case 'ArrowDown':
-		    case 'KeyS':
-		        socket.emit('down', {userName:userName})
-		        break
-		    case 'ArrowUp':
-		    case 'KeyW':
-		        socket.emit('up',{userName:userName})
-		    }
-		})
-    </script>
+    <style>
+.change-name {
+
+}
+.me
+    { font-weight: bold
+    }
+    </style>
 </head>
 <body>
-    <button onclick="var jsonObject = {userName: 'userName',
-                                          message: 'message'};
-                        socket.emit('chatevent', jsonObject);">Send a message</button>
+    <div id="root"></div>
+    <script src="https://cdn.jsdelivr.net/npm/socket.io-client@2/dist/socket.io.js"></script>
+    <script src="socket.js"></script>
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <script>
+function Header() {
+    return React.createElement(
+        'div',
+        null,
+        React.createElement('h1', null, 'Your name is ' + userName),
+        React.createElement('button', {onClick: ()=>alert('hello')}, 'Change name')
+    )
+}
+function UserListItem(props) {
+    return React.createElement('li', {className: props.me?'me': ''}, props.name)
+}
+function UserList() {
+    let names = []
+    for(user in users) {
+        names.push(users[user])
+    }
+    let userElems = names
+        .sort((a,b) => a.localeCompare(b))
+        .map((name, i) => React.createElement(UserListItem, {key: i, me: name === userName, name: name}, name))
+    return React.createElement(
+        'ul',
+        null,
+        userElems
+    )
+}
+function App() {
+    return React.createElement(
+        'div',
+        null,
+        React.createElement(Header),
+        React.createElement(UserList)
+    )
+}
+
+rerender = function (source) {
+    console.log('rerender from', source)
+    ReactDOM.render(
+        React.createElement(App, null),
+        document.getElementById('root')
+    )
+}
+    </script>
 </body>
 </html>

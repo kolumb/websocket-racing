@@ -28,6 +28,9 @@ public class Server {
                 System.out.println(client.getRemoteAddress() + " " + handshakeData.getUrlParams().get("t"));//.get(0));
                 users.put(client.getSessionId(), new User());
                 userNames.put(client.getSessionId(), users.get(client.getSessionId()).getUserName());
+
+                String name = userNames.get(client.getSessionId());
+                myBroadcastOperations.sendEvent("new user", (Object) new String[]{client.getSessionId().toString(), name});
                 client.sendEvent("everybody", userNames);
                 client.sendEvent("you", sessionId);
 //                client.sendEvent("everybody", users);
@@ -38,13 +41,7 @@ public class Server {
         server.addEventListener("chatevent", ChatObject.class, new DataListener<ChatObject>() {
             @Override
             public void onData(SocketIOClient client, ChatObject data, AckRequest ackRequest) {
-                System.out.println(data);
             }
-        });
-        server.addEventListener("hello", ChatObject.class, (client, data, ackRequest) -> {
-            String name = userNames.get(client.getSessionId());
-            System.out.println(name + ": hello");
-            myBroadcastOperations.sendEvent("new user", (Object) new String[]{client.getSessionId().toString(), name});
         });
         server.addEventListener("down", ChatObject.class, (client, data, ackRequest) -> {
             System.out.println(data.getUserName() + " moving down");
