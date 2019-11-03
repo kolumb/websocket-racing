@@ -35,7 +35,10 @@ function Header(props) {
             ),
             changingName ? React.createElement(
                 'input',
-                {defaultValue: 123, onChange:(e)=>userName = e.target.value}) : null
+                {defaultValue: 123, onChange:(e)=>{
+                    userName = e.target.value
+                    console.log(userName)
+                }}) : null // @Bug: Locally can set empty name.
         ),
         React.createElement(
             'button',
