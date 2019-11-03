@@ -27,6 +27,10 @@ socket.on('new user', data => {
     users[data[0]] = data[1]
     rerender('new user')
 });
+socket.on('new name', data => {
+    users[data[0]] = data[1]
+    rerender('new name')
+});
 socket.on('down', data => {
     console.log(data.userName + ': down!')
 });

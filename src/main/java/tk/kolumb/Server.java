@@ -51,6 +51,11 @@ public class Server {
             System.out.println(data.getUserName() + " moving up");
             myBroadcastOperations.sendEvent("up", data);
         });
+        server.addEventListener("new name", ChatObject.class, (client, data, ackRequest) -> {
+            if(data.getUserName() == null) return;
+            System.out.println( users.get(client.getSessionId()).getUserName() + " has new name: " + data.getUserName());
+            myBroadcastOperations.sendEvent("new name", (Object) new String[]{client.getSessionId().toString(), data.getUserName()});
+        });
         server.addDisconnectListener(new DisconnectListener() {
             @Override
             public void onDisconnect(SocketIOClient client) {
