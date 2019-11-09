@@ -13,6 +13,7 @@ function NameDiplayer(props) {
     );
 }
 function NameEditor(props) {
+    let okButton = React.createRef();
     return React.createElement(
         "span",
         { className: "editable-name-displayer" },
@@ -20,13 +21,14 @@ function NameEditor(props) {
             defaultValue: props.name,
             autoFocus: true,
             maxLength: 20,
-            onChange: e => {
-                userName = e.target.value;
+            onChange: e => (userName = e.target.value),
+            onKeyDown: e => {
+                if (e.keyCode === 13) okButton.current.click();
             }
         }),
         React.createElement(
             "button",
-            { className: "edit-button", onClick: props.onClick },
+            { className: "edit-button", onClick: props.onClick, ref: okButton },
             "✓"
         )
     );
