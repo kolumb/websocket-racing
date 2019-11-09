@@ -4,7 +4,7 @@ function NameDiplayer(props) {
     return React.createElement(
         "span",
         { className: "editable-name-displayer" },
-        React.createElement("span", null, props.name),
+        React.createElement("span", { className: "me" }, props.name),
         React.createElement(
             "button",
             { className: "edit-button", onClick: props.onClick },
@@ -77,7 +77,7 @@ function Header(props) {
 function UserListItem(props) {
     return React.createElement(
         "li",
-        { className: props.me ? "me" : "" },
+        props.me ? { className: "me" } : null,
         props.name
     );
 }
@@ -88,14 +88,17 @@ function UserList() {
     }
     let userElems = names
         .sort((a, b) => a.localeCompare(b))
-        .map((name, i) =>
-            React.createElement(UserListItem, {
-                key: i,
-                me: name === userName,
-                name: name
-            })
-        );
-    return React.createElement("ul", null, userElems);
+        .map((name, i) => {
+            return React.createElement(
+                name === userName ? NameControl : UserListItem,
+                {
+                    key: i,
+                    me: name === userName,
+                    name: name
+                }
+            );
+        });
+    return React.createElement("ul", { className: "user-list" }, userElems);
 }
 function App() {
     return React.createElement(
