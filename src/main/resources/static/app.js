@@ -9,19 +9,19 @@ function NameDiplayer(props) {
             "button",
             { className: "edit-button", onClick: props.onClick },
             "🖉"
-        ) //✎
+        )
     );
 }
 function NameEditor(props) {
-    console.log(props.onClick);
     return React.createElement(
         "span",
         { className: "editable-name-displayer" },
         React.createElement("input", {
             defaultValue: props.name,
+            autoFocus: true,
+            maxLength: 20,
             onChange: e => {
                 userName = e.target.value;
-                //console.log(userName);
             }
         }),
         React.createElement(

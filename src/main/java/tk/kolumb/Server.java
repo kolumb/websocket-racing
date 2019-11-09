@@ -52,11 +52,16 @@ public class Server {
             myBroadcastOperations.sendEvent("up", data);
         });
         server.addEventListener("new name", ChatObject.class, (client, data, ackRequest) -> {
-            if(data.getUserName() == "") return;
-            System.out.println( users.get(client.getSessionId()).getUserName() + " has new name: " + data.getUserName());
-            users.get(client.getSessionId()).setUserName(data.getUserName());
+            String newName = data.getUserName();
+            int newNameLength = newName.length();
+            if(newNameLength == 0) return;
+            if(newNameLength > 20) {
+                newName = newName.substring(0,20);
+            }
+            System.out.println( users.get(client.getSessionId()).getUserName() + " has new name: " + newName);
+            users.get(client.getSessionId()).setUserName(newName);
             userNames.put(client.getSessionId(), users.get(client.getSessionId()).getUserName());
-            myBroadcastOperations.sendEvent("new name", (Object) new String[]{client.getSessionId().toString(), data.getUserName()});
+            myBroadcastOperations.sendEvent("new name", (Object) new String[]{client.getSessionId().toString(), newName});
         });
         server.addDisconnectListener(new DisconnectListener() {
             @Override
