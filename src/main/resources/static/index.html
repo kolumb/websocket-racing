@@ -4,11 +4,50 @@
         <meta charset="utf-8" />
         <title>Demo Chat</title>
         <style>
+            body {
+                padding: 0;
+                background: #4a483f;
+                color: #D7D7D7;
+            }
             .change-name {
             }
             .me {
                 font-weight: bold;
+                color: #fff;
             }
+            .editable-name-displayer {
+                display: inline-flex;
+            }
+            .edit-button {
+                position: relative;
+                top: 0;
+                margin: 0 .3em;
+                border: none;
+                background: #0EACAB;
+                border-radius: .08em;
+                height: 1.5em;
+                width: 1.5em;
+                padding: 0;
+                font-size: 0.8em;
+                cursor: pointer;
+                color: #ffffff;
+                box-shadow: 0 2px 3px -2px #000;
+            }
+            .edit-button:hover {
+                background: #0fb8b8;
+                top:-1px;
+                box-shadow: 0 3px 3px -2px #000;
+            }
+            .edit-button:active {
+                background: #0c9797;
+                top:2px;
+                box-shadow: none;
+            }
+            .edit-button:focus {
+                outline: none;
+                color: #ddd;
+            }
+            
         </style>
     </head>
     <body>
