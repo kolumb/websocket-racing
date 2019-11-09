@@ -1,46 +1,75 @@
 "use strict";
 
-let changingName = false;
-// class EditableNameDisplayer (props) {
-//     render() {
-
-//     }
-// }
-function Header(props) {
+function NameDiplayer(props) {
     return React.createElement(
-        "div",
-        null,
-        React.createElement(
-            "h1",
-            null,
-            React.createElement(
-                "span",
-                null,
-                "Your name is " + (props.changing ? "" : userName)
-            ),
-            changingName
-                ? React.createElement("input", {
-                      defaultValue: 123,
-                      onChange: e => {
-                          userName = e.target.value;
-                          console.log(userName);
-                      }
-                  })
-                : null // @Bug: Locally can set empty name.
-        ),
+        "span",
+        { className: "editable-name-displayer" },
+        React.createElement("span", null, props.name),
         React.createElement(
             "button",
-            {
-                onClick: () => {
-                    if (changingName) {
-                        socket.emit("new name", { userName: userName });
-                    }
-                    changingName = !changingName;
-                    rerender("want to change name");
-                }
-            },
-            changingName ? "Ok" : "Change name"
+            { className: "edit-button", onClick: props.onClick },
+            "🖉"
+        ) //✎
+    );
+}
+function NameEditor(props) {
+    console.log(props.onClick);
+    return React.createElement(
+        "span",
+        { className: "editable-name-displayer" },
+        React.createElement("input", {
+            defaultValue: props.name,
+            onChange: e => {
+                userName = e.target.value;
+                //console.log(userName);
+            }
+        }),
+        React.createElement(
+            "button",
+            { className: "edit-button", onClick: props.onClick },
+            "✓"
         )
+    );
+}
+
+let changingName = false;
+class NameControl extends React.Component {
+    constructor(props) {
+        super(props);
+        this.handleEditClick = this.handleEditClick.bind(this);
+        this.handleAcceptClick = this.handleAcceptClick.bind(this);
+        this.state = { changingName: false };
+    }
+    handleEditClick() {
+        this.setState({ changingName: true });
+    }
+    handleAcceptClick() {
+        socket.emit("new name", { userName: userName });
+        this.setState({ changingName: false });
+    }
+    render() {
+        const changingName = this.state.changingName;
+        let nameElement;
+        if (changingName) {
+            nameElement = React.createElement(NameEditor, {
+                name: this.props.name,
+                onClick: this.handleAcceptClick
+            });
+        } else {
+            nameElement = React.createElement(NameDiplayer, {
+                name: this.props.name,
+                onClick: this.handleEditClick
+            });
+        }
+        return nameElement;
+    }
+}
+function Header(props) {
+    return React.createElement(
+        "h1",
+        null,
+        React.createElement("span", null, "Your name is "),
+        React.createElement(NameControl, { name: userName })
     );
 }
 function UserListItem(props) {
